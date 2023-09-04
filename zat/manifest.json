@@ -1,0 +1,12 @@
+{
+  "name": "Unitel Live Chat Connector",
+  "author": {
+    "name": "Diastowo",
+    "email": "diastowo.faryduana@treessolutions.com",
+    "url": "https://treessolutions.com"
+  },
+  "defaultLocale": "en",
+  "private": true,
+  "version": "1.0",
+  "requirementsOnly": true
+}

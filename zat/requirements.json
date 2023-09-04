@@ -1,0 +1,7 @@
+{
+  "channel_integrations": {
+    "trees-emarcon-chat-integration": {
+      "manifest_url": "https://42bc-180-251-180-135.ngrok-free.app/api/v1/manifest"
+    }
+  }
+}
