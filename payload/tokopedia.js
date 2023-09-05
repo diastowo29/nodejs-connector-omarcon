@@ -1,36 +1,23 @@
-
-const pushConversationPayload = function (pushApi, cifToken, pushId, extResources) {
-    const cifPayload = {
+const replyMessagePayload = function (fsId, msgId, shopId, message, token) {
+    const tokpedPayload = {
         method: 'POST',
-        url: pushApi,
+        url: tokpedReplyUrl(fsId, msgId),
         headers: {
-            'Authorization': cifToken
+            'Authorization': 'Bearer ' + token
         },
         data: {
-            instance_push_id: pushId,
-            external_resources: extResources
+            shop_id: parseInt(shopId),
+            message: message
         }
     }
 
-    return cifPayload;
+    return tokpedPayload;
 }
 
-const pushBackPayload = function (replyBackApi, chatToken, messagePayload) {
-    const replybackPayload = {
-        method: 'POST',
-        url: replyBackApi,
-        headers: {
-            'Authorization': 'Bearer ' + chatToken
-        },
-        data: {
-            message: messagePayload
-        }
-    }
-
-    return replybackPayload;
+function tokpedReplyUrl (fsId, msgId) {
+    return `https://fs.tokopedia.net/v1/chat/fs/${fsId}/messages/${msgId}/reply`
 }
 
 module.exports = {
-    pushConversationPayload,
-    pushBackPayload
+    replyMessagePayload
 }
