@@ -1,3 +1,4 @@
+const proxyConfig = require("../config/proxy.config");
 const replyMessagePayload = function (fsId, msgId, shopId, message, token) {
     const tokpedPayload = {
         method: 'POST',
@@ -9,15 +10,7 @@ const replyMessagePayload = function (fsId, msgId, shopId, message, token) {
             shop_id: parseInt(shopId),
             message: message
         },
-        proxy: {
-            protocol: 'http',
-            host: 'us-east-static-04.quotaguard.com',
-            port: 9293,
-            auth: {
-                username: 'dwz46euwvq023k',
-                password: 'e5cnvi39jeq8nooxxe0hopd78a1xn'
-            }
-        }
+        proxy: proxyConfig
     }
 
     return tokpedPayload;

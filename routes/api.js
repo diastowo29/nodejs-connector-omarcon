@@ -4,12 +4,27 @@ const zdSvc = require('../payload/zendesk')
 const tokped = require('../payload/tokopedia')
 var router = express.Router();
 var cif = require('../payload/cifhelper')
+var url = require("url");
 require('dotenv').config()
 
 var tokpedHost = process.env.TOKPED_HOST;
 let ZD_PUSH_ID = process.env.ZD_PUSH_ID;
 let ZD_PUSH_TOKEN = process.env.ZD_PUSH_TOKEN;
 const ZD_PUSH_API = process.env.ZD_PUSH_API || 'https://pdi-rokitvhelp.zendesk.com/api/v2/any_channel/push'; //ENV VARIABLE
+let proxyUrl = process.env.QUOTAGUARDSTATIC_URL;
+
+router.get('/test', function(req, res, next) {
+    res.status(200).send({
+        tokped_host: tokpedHost,
+        zd_push_id: ZD_PUSH_ID,
+        zd_push_token: ZD_PUSH_TOKEN,
+        zd_push_api: ZD_PUSH_API,
+        proxy_username: url.parse(proxyUrl).auth.split(':')[0],
+        proxy_password: url.parse(proxyUrl).auth.split(':')[1],
+        proxy_host: url.parse(proxyUrl).hostname,
+        proxy_port: url.parse(proxyUrl).port
+    })
+})
 
 router.get('/manifest', function(req, res, next) {
     let host = req.hostname
