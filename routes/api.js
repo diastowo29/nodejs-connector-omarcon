@@ -67,6 +67,8 @@ router.get('/admin', function(req, res, next) {
         }
     })
 
+    console.log(token)
+
     metadata['instance_push_id'] = req.body.instance_push_id;
     metadata['zendesk_access_token'] = req.body.zendesk_access_token;
     metadata['client_id'] = process.env.TOKPED_CLIENT_ID
