@@ -10,7 +10,7 @@ const replyMessagePayload = function (fsId, msgId, shopId, message, token) {
             message: message
         },
         proxy: {
-            protocol: 'https',
+            protocol: 'http',
             host: 'us-east-static-04.quotaguard.com',
             port: 9293,
             auth: {
