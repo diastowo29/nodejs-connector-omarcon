@@ -8,6 +8,15 @@ const replyMessagePayload = function (fsId, msgId, shopId, message, token) {
         data: {
             shop_id: parseInt(shopId),
             message: message
+        },
+        proxy: {
+            protocol: 'https',
+            host: 'us-east-static-04.quotaguard.com',
+            port: 9293,
+            auth: {
+                username: 'dwz46euwvq023k',
+                password: 'e5cnvi39jeq8nooxxe0hopd78a1xn'
+            }
         }
     }
 
