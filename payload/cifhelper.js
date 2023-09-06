@@ -154,8 +154,8 @@ body {
 
 .product-text h1 {
   margin: 0 0 0 38px;
-  padding-top: 52px;
-  font-size: 24px;
+  padding-top: 22px;
+  font-size: 20px;
   color: #474747;
 }
 
@@ -246,6 +246,9 @@ span {
         </div>
         <div class="product-price-btn">
           <p><span>${price}</span></p>
+        </div>
+        <div style="height: 103px;margin-top: 17px;width: 327px;padding-left: 38px;">
+          <button class="btn btn-warning">See Product</button>
         </div>
       </div>
     </div>
