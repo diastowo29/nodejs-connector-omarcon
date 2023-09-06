@@ -234,6 +234,16 @@ span {
 .product-price-btn button:hover {
   background-color: #79b0a1;
 }
+
+.btn-test {
+  box-shadow: none;
+  background-color: #fda028;
+  border-color: #fda028;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px 10px 20px;
+}
     </style>
     <link href="https://fonts.googleapis.com/css?family=Bentham|Playfair+Display|Raleway:400,500|Suranna|Trocchi" rel="stylesheet">
   </head>
