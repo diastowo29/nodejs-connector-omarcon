@@ -248,7 +248,7 @@ span {
           <p><span>${price}</span></p>
         </div>
         <div style="height: 103px;margin-top: 17px;width: 327px;padding-left: 38px;">
-          <a href=# class="btn btn-warning">See Product</a>
+          <a href="#" class="btn btn-warning btn-test">See Product</a>
         </div>
       </div>
     </div>
