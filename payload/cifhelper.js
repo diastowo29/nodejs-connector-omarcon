@@ -243,6 +243,16 @@ span {
   font-size: 14px;
   font-weight: 600;
   padding: 10px 20px 10px 20px;
+  display: inline-block;
+  margin-bottom: 0;
+  line-height: 18px;
+  text-align: center;
+  text-shadow: none !important;
+  vertical-align: middle;
+  cursor: pointer;
+  background-image: none;
+  border-radius: 4px;
+  white-space: nowrap;
 }
     </style>
     <link href="https://fonts.googleapis.com/css?family=Bentham|Playfair+Display|Raleway:400,500|Suranna|Trocchi" rel="stylesheet">
