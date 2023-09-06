@@ -120,8 +120,8 @@ body {
 
 .wrapper {
   overflow-y: hidden !important;
-  height: 220px !important;
-  width: 654px;
+  height: 189px !important;
+  width: 327px;
   border-radius: 7px 7px 7px 7px;
   /* VIA CSS MATIC https://goo.gl/cIbnS */
   -webkit-box-shadow: 0px 14px 32px 0px rgba(0, 0, 0, 0.15);
