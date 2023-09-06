@@ -81,9 +81,6 @@ router.get('/admin', function(req, res, next) {
             'Authorization': 'Basic ' + new Buffer.from(process.env.TOKPED_CLIENT_ID + ":" + process.env.TOKPED_CLIENT_SECRET).toString("base64")
         }
     })
-
-    console.log(token)
-
     metadata['instance_push_id'] = req.body.instance_push_id;
     metadata['zendesk_access_token'] = req.body.zendesk_access_token;
     metadata['client_id'] = process.env.TOKPED_CLIENT_ID
@@ -113,21 +110,21 @@ router.post('/chat', async function(req, res, next) {
     let cifPayload = await (cif.cifPayload(req.body, 0, 0, '22587396407065'));
 	let external_resource_array = [cifPayload];
     let auth = `Bearer ${ZD_PUSH_TOKEN}`
-    let axiosPayload = zdSvc.pushConversationPayload(ZD_PUSH_API, auth, ZD_PUSH_ID, external_resource_array)
-    axios(axiosPayload).then((response) => {
-        res.status(200).send(response.data)
-    }, (error) => {
-        res.status(error.response.status).send({error: error})
-    })
+    try {
+        let axiosPayload = zdSvc.pushConversationPayload(ZD_PUSH_API, auth, ZD_PUSH_ID, external_resource_array)
+        // res.status(200).send(axiosPayload)
+        axios(axiosPayload).then((response) => {
+            res.status(200).send(response.data)
+        }, (error) => {
+            res.status(error.response.status).send({error: error})
+        })
+    } catch (e) {
+        res.status(500).send({error: 'crashed'})
+    }
 });
 
 router.post('/channelback', async function(req, res, next) {
-    // let username = recipient.split('::')[1];
-    // let userid = recipient.split('::')[2];
-    // let brandid = req.body.thread_id.split('-')[3];
-    // let msgid = `tokped-ticket-${userid}-channelback-${Date.now()}`;
-    
-	let recipient = Buffer.from(req.body.recipient_id, 'base64').toString('ascii');
+	// let recipient = Buffer.from(req.body.recipient_id, 'base64').toString('ascii');
     let fsId = process.env.TOKPED_APPS_ID;
     let msgId = req.body.parent_id.split('-')[3];
     let shopId = req.body.thread_id.split('-')[3];
@@ -135,7 +132,7 @@ router.post('/channelback', async function(req, res, next) {
     
     // console.log(tokped.replyMessagePayload(fsId, msgId, shopId, req.body.message, metadata.token));
     let reply = await axios(tokped.replyMessagePayload(fsId, msgId, shopId, req.body.message, metadata.token))
-    if (reply.status== 200) {
+    if (reply.status == 200) {
         res.status(200).send({external_id: reply.data.msg_id + '-' + reply.data.reply_time})
     } else {
         res.status(reply.status).send(reply.data)

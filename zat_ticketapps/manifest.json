@@ -1,0 +1,36 @@
+{
+  "name": "Product Overview",
+  "author": {
+    "name": "Trees Solutions",
+    "email": "info@treessolutions.com",
+    "url": "https://treessolutions.com"
+  },
+  "defaultLocale": "en",
+  "private": true,
+  "location": {
+    "support": {
+      "ticket_sidebar": {
+        "url": "assets/iframe.html",
+        "flexible": true
+      },
+      "modal": {
+        "url": "assets/modal.html"
+      }
+    }
+  },
+  "parameters": [
+    {
+      "name": "Production Env",
+      "type": "text",
+      "required": true,
+      "default": "https://connector-switchboard-kata-dev.herokuapp.com/"
+    },
+    {
+      "name": "Production Secret Key",
+      "type": "hidden",
+      "default": "af0681a3-a207-4a6a-b6f9-73c4600fd1a4"
+    }
+  ],
+  "version": "1.0",
+  "frameworkVersion": "2.0"
+}
