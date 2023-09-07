@@ -77,6 +77,8 @@ router.get('/admin', function(req, res, next) {
   router.post('/add', async function(req, res, next) {
     let metadata = {};
 
+    console.log(req.body)
+
     let token = await tokped.newToken(process.env.TOKPED_CLIENT_ID, process.env.TOKPED_CLIENT_SECRET);
     metadata['instance_push_id'] = req.body.instance_push_id;
     metadata['zendesk_access_token'] = req.body.zendesk_access_token;
