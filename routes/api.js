@@ -5,6 +5,8 @@ const tokped = require('../payload/tokopedia')
 var router = express.Router();
 var cif = require('../payload/cifhelper')
 var url = require("url");
+const db = require("../models");
+const connection = db.zdConnection; // GANTI
 require('dotenv').config()
 
 var tokpedHost = process.env.TOKPED_HOST;
@@ -45,13 +47,14 @@ router.get('/manifest', function(req, res, next) {
 
 router.get('/admin', function(req, res, next) {
     res.render('admin', {
-      title: 'Unitel CIF Admin',
+      title: 'oMarcon CIF Admin',
       return_url: 'return_url',
       instance_push_id: 'instance_push_id',
       zendesk_access_token: 'zd_token',
       locale: 'locale',
       subdomain: 'subdomain'
     });
+    
   })
   
   router.post('/admin', function(req, res, next) {
@@ -60,7 +63,7 @@ router.get('/admin', function(req, res, next) {
     let locale = req.body.locale
     let subdomain = req.body.subdomain
     let return_url = req.body.return_url
-  
+ 
     res.render('admin', {
       title: 'CIF Admin',
       return_url: return_url,
@@ -74,13 +77,7 @@ router.get('/admin', function(req, res, next) {
   router.post('/add', async function(req, res, next) {
     let metadata = {};
 
-    let token = await axios({
-        method: 'POST',
-        url: 'https://accounts.tokopedia.com/token?grant_type=client_credentials',
-        headers: {
-            'Authorization': 'Basic ' + new Buffer.from(process.env.TOKPED_CLIENT_ID + ":" + process.env.TOKPED_CLIENT_SECRET).toString("base64")
-        }
-    })
+    let token = await tokped.newToken(process.env.TOKPED_CLIENT_ID, process.env.TOKPED_CLIENT_SECRET);
     metadata['instance_push_id'] = req.body.instance_push_id;
     metadata['zendesk_access_token'] = req.body.zendesk_access_token;
     metadata['client_id'] = process.env.TOKPED_CLIENT_ID
@@ -89,23 +86,32 @@ router.get('/admin', function(req, res, next) {
     metadata['subdomain'] = req.body.subdomain;
     metadata['locale'] = req.body.locale;
     metadata['return_url'] = req.body.return_url;
-    metadata['bot_name'] = req.body.bot_name;
+    metadata['bot_name'] = req.body.integration_name;
 
-    let name = "Tokopedia Store : " + req.body.bot_name
-    res.render('confirm', {
-        title: 'CIF Confirmation Page',
-        return_url: req.body.return_url,
-        metadata: JSON.stringify(metadata),
-        state: JSON.stringify({}),
-        name: name
-    });
+    connection.create({
+        zd_pushid: req.body.instance_push_id,
+        zd_pushtoken: req.body.zendesk_access_token,
+        zd_instance: req.body.subdomain,
+        channel: req.body.marketType,
+        shop_url: req.body.store_name,
+        integration_name: req.body.integration_name
+    }).then(function(cCreated) {
+        let name = `${req.body.marketType} Store : ${req.body.integration_name}` 
+        res.render('confirm', {
+            title: 'CIF Confirmation Page',
+            return_url: req.body.return_url,
+            metadata: JSON.stringify(metadata),
+            state: JSON.stringify({}),
+            name: name
+        });
+    })
+
   })
   
   router.post('/pull', function(req, res, next) {
       res.status(200).send();
   })
 
-/* GET home page. */
 router.post('/chat', async function(req, res, next) {
     let cifPayload = await (cif.cifPayload(req.body, 0, 0, '22587396407065'));
 	let external_resource_array = [cifPayload];
@@ -121,6 +127,29 @@ router.post('/chat', async function(req, res, next) {
     } catch (e) {
         res.status(500).send({error: 'crashed'})
     }
+});
+
+router.post('/discussion', async function(req, res, next) {
+    // console.log(JSON.stringify(req.body))
+    let cifPayload = await (cif.cifDiscussionPayload(req.body, 0, 0, '22587396407065'));
+
+    /* === REPLY TO DISCUSSION NOT YET SUPPORTED */
+	/* let external_resource_array = [cifPayload];
+    let auth = `Bearer ${ZD_PUSH_TOKEN}`
+    try {
+        let axiosPayload = zdSvc.pushConversationPayload(ZD_PUSH_API, auth, ZD_PUSH_ID, external_resource_array)
+        // res.status(200).send(axiosPayload)
+        axios(axiosPayload).then((response) => {
+            res.status(200).send(response.data)
+        }, (error) => {
+            res.status(error.response.status).send({error: error})
+        })
+    } catch (e) {
+        res.status(500).send({error: 'crashed'})
+    } */
+    /* === REPLY TO DISCUSSION NOT YET SUPPORTED */
+
+    res.status(200).send(cifPayload);
 });
 
 router.post('/channelback', async function(req, res, next) {

@@ -1,4 +1,5 @@
 var mime = require('mime-types');
+let html_msg = require('../payload/html_helper')
 const axios = require('axios');
 // const LOGGLY_TOKEN = process.env.LOGGLY_TOKEN || '25cbd41e-e0a1-4289-babf-762a2e6967b6';
 // var winston = require('winston');
@@ -12,13 +13,54 @@ const axios = require('axios');
 //   json: true
 // }));
 
+const cifDiscussionPayload = async function (payload, brand_id, user_ticket_id, product_field_id) {
+  var msgObj = {};
+  let userid = payload.discussion_data.user_id
+  let username = payload.discussion_data.user_full_name == undefined ? `Tokopedia User ${userid}` : payload.discussion_data.user_full_name;
+  let ticket_thread_id;
+  let ticket_external_id;
+  if (payload.discussion_type == 'NewQuestion') {
+     ticket_thread_id = `tokped-thread-dc-${userid}-${payload.discussion_data.shop_id}-${payload.discussion_data.id}`;
+     ticket_external_id = `tokped-ticket-dc-${userid}-${payload.discussion_data.id}-${Date.now()}`;
+  } else {
+     ticket_thread_id = `tokped-thread-dc-${userid}-${payload.discussion_data.shop_id}-${payload.discussion_data.question_id}`;
+     ticket_external_id = `tokped-ticket-dc-${userid}-${payload.discussion_data.answer_id}-${Date.now()}`;
+  }
+  let author_external_id = Buffer.from(`tokped::${userid}`).toString('base64');
+  let product_id = payload.discussion_data.product_id;
+  // let msg_type = payload.type;
+  let msg_content = payload.discussion_data.message;
+  msgObj = {
+      external_id: ticket_external_id,
+      thread_id: ticket_thread_id,
+      created_at: new Date().toISOString(),
+      message: msg_content,
+      author: {
+          external_id: author_external_id,
+          name: username
+      },
+      fields:[{
+          id: 'subject',
+          value: 'Incoming Tokopedia Discussion from: ' + username
+      },{
+          id: user_ticket_id.toString(),
+          value: userid
+      }, {
+          id: product_field_id.toString(),
+          value: product_id
+      }],
+      allow_channelback: true
+  }
+  return msgObj;
+}
+
 const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_id) {
     var msgObj = {};
     let username = msg.full_name
     let userid = msg.user_id
     let ticket_external_id = `tokped-ticket-${userid}-${msg.msg_id}-${Date.now()}`;
     let ticket_thread_id = `tokped-thread-${userid}-${msg.shop_id}-${brand_id}`;
-    let author_external_id = Buffer.from(`tokped::${username}::${userid}`).toString('base64');
+    let author_external_id = Buffer.from(`tokped::${userid}`).toString('base64');
     let product_id = msg.payload.product.product_id;
     // let msg_type = msg.type;
     let msg_content = msg.message;
@@ -45,7 +87,7 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
     }
     if (product_id != 0) {
       let html_msg_content = '';
-      html_msg_content = productHtml(msg.payload.product.image_url, msg.payload.product.name, msg.payload.product.price)
+      html_msg_content = html_msg.productHtml(msg.payload.product.image_url, msg.payload.product.name, msg.payload.product.price)
       msg_content = 'Product'
       msgObj['html_message'] = html_msg_content
       msgObj['display_info'] = [{
@@ -101,183 +143,6 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
   return msgObj;
 }
 
-function productHtml (image, name, price) {
-  return `<html lang="en">
-
-  <head>
-    <style>
-    /* 
-* Design by Robert Mayer:https://goo.gl/CJ7yC8
-*
-*I intentionally left out the line that was supposed to be below the subheader simply because I don't like how it looks.
-*
-* Chronicle Display Roman font was substituted for similar fonts from Google Fonts.
-*/
-
-body {
-  background-color: #fdf1ec;
-}
-
-.wrapper {
-  overflow-y: hidden !important;
-  height: 189px !important;
-  width: 327px;
-  border-radius: 7px 7px 7px 7px;
-  /* VIA CSS MATIC https://goo.gl/cIbnS */
-  -webkit-box-shadow: 0px 14px 32px 0px rgba(0, 0, 0, 0.15);
-  -moz-box-shadow: 0px 14px 32px 0px rgba(0, 0, 0, 0.15);
-  box-shadow: 0px 14px 32px 0px rgba(0, 0, 0, 0.15);
-}
-
-.product-img {
-  float: left;
-  height: 420px;
-  width: 327px;
-}
-
-.product-img img {
-  border-radius: 7px 0 0 7px;
-}
-
-.product-info {
-  float: left;
-  height: 420px;
-  width: 327px;
-  border-radius: 0 7px 10px 7px;
-  background-color: #ffffff;
-}
-
-.product-text {
-  height: 300px;
-  width: 327px;
-}
-
-.product-text h1 {
-  margin: 0 0 0 38px;
-  padding-top: 22px;
-  font-size: 20px;
-  color: #474747;
-}
-
-.product-text h1,
-.product-price-btn p {
-  font-family: 'Bentham', serif;
-}
-
-.product-text h2 {
-  margin: 0 0 47px 38px;
-  font-size: 13px;
-  font-family: 'Raleway', sans-serif;
-  font-weight: 400;
-  text-transform: uppercase;
-  color: #d2d2d2;
-  letter-spacing: 0.2em;
-}
-
-.product-text p {
-  height: 125px;
-  margin: 0 0 0 38px;
-  font-family: 'Playfair Display', serif;
-  color: #8d8d8d;
-  line-height: 1.7em;
-  font-size: 15px;
-  font-weight: lighter;
-  overflow: hidden;
-}
-
-.product-price-btn {
-  height: 103px;
-  width: 327px;
-  margin-top: 17px;
-  position: relative;
-}
-
-.product-price-btn p {
-  display: inline-block;
-  position: absolute;
-  top: -13px;
-  height: 50px;
-  font-family: 'Trocchi', serif;
-  margin: 0 0 0 38px;
-  font-size: 28px;
-  font-weight: lighter;
-  color: #474747;
-}
-
-span {
-  display: inline-block;
-  height: 50px;
-  font-family: 'Suranna', serif;
-  font-size: 34px;
-}
-
-.product-price-btn button {
-  float: right;
-  display: inline-block;
-  height: 50px;
-  width: 176px;
-  margin: 0 40px 0 16px;
-  box-sizing: border-box;
-  border: transparent;
-  border-radius: 60px;
-  font-family: 'Raleway', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: #ffffff;
-  background-color: #9cebd5;
-  cursor: pointer;
-  outline: none;
-}
-
-.product-price-btn button:hover {
-  background-color: #79b0a1;
-}
-
-.btn-test {
-  box-shadow: none;
-  background-color: #fda028;
-  border-color: #fda028;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 14px;
-  font-weight: 600;
-  padding: 10px 20px 10px 20px;
-  display: inline-block;
-  margin-bottom: 0;
-  line-height: 18px;
-  text-align: center;
-  text-shadow: none !important;
-  vertical-align: middle;
-  cursor: pointer;
-  background-image: none;
-  border-radius: 4px;
-  white-space: nowrap;
-}
-    </style>
-    <link href="https://fonts.googleapis.com/css?family=Bentham|Playfair+Display|Raleway:400,500|Suranna|Trocchi" rel="stylesheet">
-  </head>
-  
-  <body>
-    <div class="wrapper">
-      <div class="product-info">
-        <div class="product-text">
-          <h1>${name}</h1>
-        </div>
-        <div class="product-price-btn">
-          <p><span>${price}</span></p>
-        </div>
-        <div style="height: 103px;margin-top: 17px;width: 327px;padding-left: 38px;">
-          <a href="#" class="btn btn-warning btn-test">See Product</a>
-        </div>
-      </div>
-    </div>
-  
-  </body>
-  
-  </html>`
-}
-
 const fileExtValidator = function (zdFile) {
     var fileType = '';
     switch (mime.lookup(zdFile)) {
@@ -313,5 +178,6 @@ function goLogging(status, process, to, message, name) {
 
 module.exports = {
     cifPayload,
+    cifDiscussionPayload,
     fileExtValidator
 }

@@ -2,21 +2,30 @@ extends layout
 
 
 block content
-  h1 Unitel Chat Integration
-  p Welcome to Unitel Chat Integration
+  h1 Marketplace Chat Integration
+  p Welcome to oMarcon Chat Integration
   .main.container
     .row
       .col-md-6.col-md-offset-3
         form(method='POST' action='/api/v1/add')
           div.form-group.col-md-12
+            label(for='name') Select Marketplace:
+            select#propertyType.select.form-control.input-lg(name='marketType')
+              option(value='0', selected= true) -- Select --
+              option(value='Tokopedia') Tokopedia
+              option(value='Lazada' disabled) Lazada (Soon)
+              option(value='Blibli' disabled) BliBli (Soon)
+              option(value='Shopee' disabled) Shopee (Soon)
+              option(value='Tiktok' disabled) Tiktok Shop (Soon)
+              option(value='Bukalapak' disabled) Bukalapak (Soon)
+          div.form-group.col-md-12
+            label(for='name') Store URL:
+            input#name.form-control(type='text', placeholder='https://www.tokopedia.com/{store-abc}' value='' name='store_name')
+          div.form-group.col-md-12
             label(for='name') Integration Name:
-            input#name.form-control(type='text', placeholder='Sample Account' value='' name='bot_name')
-          div.form-group.col-md-12
-            label(for='email') Zendesk Token:
-            input#name.form-control(type='text', value=zendesk_access_token, name='zendesk_access_token' disabled='true')
-          div.form-group.col-md-12
-            label(for='email') Zendesk Instance Push ID:
-            input#name.form-control(type='text', value=instance_push_id, name='instance_push_id' disabled='true')
+            input#name.form-control(type='text', placeholder='ABC Store' value='' name='integration_name')
+            input#name.form-control(type='text', value=zendesk_access_token, name='zendesk_access_token', hidden, disabled='true')
+            input#name.form-control(type='text', value=instance_push_id, name='instance_push_id', hidden, disabled='true')
             input#name.form-control(type='text', value=subdomain, name='subdomain', hidden)
             input#name.form-control(type='text', value=locale, name='locale', hidden)
             input#name.form-control(type='text', value=return_url, name='return_url', hidden)

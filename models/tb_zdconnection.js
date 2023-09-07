@@ -1,34 +1,49 @@
 module.exports = function(sequelize, DataTypes) {
-    return sequelize.define('tb_zdconnection', {
+    return sequelize.define('omrcn_zdconnection', {
       id: {
         autoIncrement: true,
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true
       },
-      zdPushId: {
+      zd_pushid: {
         type: DataTypes.STRING(255),
-        allowNull: true,
+        allowNull: false,
         field: 'zd_pushid'
       },
-      zdPushToken: {
+      zd_pushtoken: {
         type: DataTypes.STRING(255),
-        allowNull: true,
+        allowNull: false,
         field: 'zd_pushtoken'
       },
-      zdInstance: {
+      zd_instance: {
         type: DataTypes.STRING(255),
-        allowNull: true,
+        allowNull: false,
         field: 'zd_instance'
       },
       channel: {
         type: DataTypes.STRING(255),
-        allowNull: true,
+        allowNull: false,
         field: 'channel'
+      },
+      shop_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        field: 'shop_id'
+      },
+      shop_url: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        field: 'shop_url'
+      },
+      integration_name: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        field: 'integration_name'
       }
     }, {
       sequelize,
-      tableName: 'tb_zdconnection',
+      tableName: 'omrcn_zdconnection',
       schema: 'public',
       timestamps: true
     });
