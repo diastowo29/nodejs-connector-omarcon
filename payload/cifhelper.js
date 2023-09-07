@@ -87,14 +87,14 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
     }
     if (product_id != 0) {
       let html_msg_content = '';
-      html_msg_content = html_msg.productHtml(msg.payload.product.image_url, msg.payload.product.name, msg.payload.product.price)
+      html_msg_content = html_msg.productHtml(msg.payload.product.name, msg.payload.product.price, msg.payload.product.product_url)
       msg_content = 'Product'
       msgObj['html_message'] = html_msg_content
       msgObj['display_info'] = [{
         type: 'product',
         data: {
           id: product_id,
-          url: msg.payload.product.image_url,
+          url: msg.payload.product.product_url,
           name: msg.payload.product.name
         }
       }]
