@@ -1,7 +1,7 @@
-const pushConversationPayload = function (pushApi, cifToken, pushId, extResources) {
+const pushConversationPayload = function (instance, cifToken, pushId, extResources) {
     const cifPayload = {
         method: 'POST',
-        url: pushApi,
+        url: pushEndpoint(instance),
         headers: {
             'Authorization': cifToken
         },
@@ -27,6 +27,10 @@ const pushBackPayload = function (replyBackApi, chatToken, messagePayload) {
     }
 
     return replybackPayload;
+}
+
+function pushEndpoint (instance) {
+    return `https://${instance}.zendesk.com/api/v2/any_channel/push`
 }
 
 module.exports = {

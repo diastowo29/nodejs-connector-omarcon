@@ -40,6 +40,11 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.STRING(255),
         allowNull: true,
         field: 'integration_name'
+      },
+      status: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        field: 'status'
       }
     }, {
       sequelize,
