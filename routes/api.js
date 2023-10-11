@@ -14,17 +14,9 @@ var tokpedHost = process.env.TOKPED_HOST;
 // let ZD_PUSH_TOKEN = process.env.ZD_PUSH_TOKEN;
 let proxyUrl = process.env.QUOTAGUARDSTATIC_URL;
 
-router.get('/test', function(req, res, next) {
-    res.status(200).send({
-        tokped_host: tokpedHost,
-        zd_push_id: ZD_PUSH_ID,
-        zd_push_token: ZD_PUSH_TOKEN,
-        zd_push_api: ZD_PUSH_API,
-        proxy_username: url.parse(proxyUrl).auth.split(':')[0],
-        proxy_password: url.parse(proxyUrl).auth.split(':')[1],
-        proxy_host: url.parse(proxyUrl).hostname,
-        proxy_port: url.parse(proxyUrl).port
-    })
+router.get('/test', async function(req, res, next) {
+    let zdConnection = await connection.findAll();
+    res.status(200).send({ connection: zdConnection })
 })
 
 router.get('/manifest', function(req, res, next) {
