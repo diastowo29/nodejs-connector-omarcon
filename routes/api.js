@@ -7,6 +7,7 @@ var cif = require('../payload/cifhelper')
 var url = require("url");
 const db = require("../models");
 const connection = db.zdConnection; // GANTI
+const marketplace = db.zdMarketplaces; // GANTI
 require('dotenv').config()
 
 var tokpedHost = process.env.TOKPED_HOST;
@@ -16,7 +17,8 @@ let proxyUrl = process.env.QUOTAGUARDSTATIC_URL;
 
 router.get('/test', async function(req, res, next) {
     let zdConnection = await connection.findAll();
-    res.status(200).send({ connection: zdConnection })
+    let zdMarketplaces = await marketplace.findAll();
+    res.status(200).send({ connection: zdConnection, marketplace: zdMarketplaces })
 })
 
 router.get('/manifest', function(req, res, next) {
