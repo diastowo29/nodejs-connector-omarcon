@@ -62,6 +62,7 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
     let ticket_thread_id = `tokped-thread-${userid}-${msg.shop_id}-${brand_id}`;
     let author_external_id = Buffer.from(`tokped::${userid}`).toString('base64');
     let product_id = msg.payload.product.product_id;
+    let attachment_type = msg.payload.attachment_type;
     // let msg_type = msg.type;
     let msg_content = msg.message;
     msgObj = {
@@ -85,7 +86,7 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
         }],
         allow_channelback: true
     }
-    if (product_id != 0) {
+    if (attachment_type == 3) {
       let html_msg_content = '';
       html_msg_content = html_msg.productHtml(msg.payload.product.name, msg.payload.product.price, msg.payload.product.product_url)
       msg_content = 'Product'
@@ -98,6 +99,11 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
           name: msg.payload.product.name
         }
       }]
+    } else if (attachment_type == 2) {
+      let image_url = msg.payload.image.image_url;
+      // let ext = mime.extension(mime.lookup(image_url))
+      // console.log(ext)
+      msgObj['file_urls'] = [`/api/v1/file/image.jpeg?source=${image_url}`]
     }
 
 //   if (msg_type == 'text') {

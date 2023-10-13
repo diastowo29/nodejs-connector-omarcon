@@ -1,7 +1,7 @@
 {
   "channel_integrations": {
     "trees-emarcon-chat-integration": {
-      "manifest_url": "https://connector-omarcon-dev-a1b0005edb58.herokuapp.com/api/v1/manifest"
+      "manifest_url": "https://https://67d5-117-54-181-242.ngrok-free.app.herokuapp.com/api/v1/manifest"
     }
   }
 }

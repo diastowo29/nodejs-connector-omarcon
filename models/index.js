@@ -11,8 +11,7 @@ const Sequelize = require("sequelize");
 //     idle: dbConfig.pool.idle
 //   }
 // });
-
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+const sequelize = new Sequelize("postgres://pzcsmdczukiydi:9c5aeb510bd9cf696bdcf56fd4aa815a8ac8c4c309f1414377644c0958b6761f@ec2-3-229-161-70.compute-1.amazonaws.com:5432/dejjpttscbv6cu", {
   dialect: dbConfig.dialect,
   operatorsAliases: false,
   dialectOptions: {

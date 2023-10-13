@@ -119,7 +119,6 @@ router.post('/chat', async function(req, res, next) {
             try {
                 let auth = `Bearer ${conn.zd_pushtoken}`
                 let axiosPayload = zdSvc.pushConversationPayload(conn.zd_instance, auth, conn.zd_pushid, external_resource_array)
-                // res.status(200).send(axiosPayload)
                 axios(axiosPayload).then((response) => {
                     res.status(200).send(response.data)
                 }, (error) => {
@@ -236,6 +235,11 @@ router.post('/channelback', async function(req, res, next) {
 //     })
 //   });
 	// res.status(200).send({});	
+})
+
+router.post('/file/:filename\.:ext?', function(req, res, next) {
+    let fileUrl = req.query.source;
+    request.get(fileUrl).pipe(res)
 })
 
 router.get('/clickthrough', function(req, res, next) {
