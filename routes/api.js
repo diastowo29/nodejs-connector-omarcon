@@ -158,26 +158,35 @@ router.post('/discussion', async function(req, res, next) {
 });
 
 router.post('/channelback', async function(req, res, next) {
-	// let recipient = Buffer.from(req.body.recipient_id, 'base64').toString('ascii');
     let fsId = process.env.TOKPED_APPS_ID;
     let msgId = req.body.parent_id.split('-')[3];
     let shopId = req.body.thread_id.split('-')[3];
-    let metadata = JSON.parse(req.body.metadata)
-    console.log(req.body.metadata)
-    metadata["newtoken"] = '213abc'
-    res.status(200).send({
-        external_id: 'reply.data.msg_id' + '-' + Math.floor(Math.random() * 100),
-        metadata: JSON.stringify(metadata)
-    })
-
-    
+    let metadata = JSON.parse(req.body.metadata)    
     // console.log(tokped.replyMessagePayload(fsId, msgId, shopId, req.body.message, metadata.token));
-    // let reply = await axios(tokped.replyMessagePayload(fsId, msgId, shopId, req.body.message, metadata.token))
-    // if (reply.status == 200) {
-    //     res.status(200).send({external_id: reply.data.msg_id + '-' + reply.data.reply_time})
-    // } else {
-    //     res.status(reply.status).send(reply.data)
-    // }
+    axios(tokped.replyMessagePayload(fsId, msgId, shopId, req.body.message, metadata.token)).then(function(reply) {
+        if (reply.status == 200) {
+            res.status(200).send({external_id: reply.data.msg_id + '-' + reply.data.reply_time})
+        } else {
+            res.status(reply.status).send(reply.data)
+        }
+    }).catch(async function(err){
+        console.log('error', err.status)
+        if (err.status == 401) {
+            let token = await tokped.newToken(process.env.TOKPED_CLIENT_ID, process.env.TOKPED_CLIENT_SECRET);
+            metadata['token'] = token;
+            let new_reply = await axios(tokped.replyMessagePayload(fsId, msgId, shopId, req.body.message, metadata.token))
+            if (new_reply.status == 200) {
+                res.status(200).send({
+                    external_id: new_reply.data.msg_id + '-' + new_reply.data.reply_time,
+                    metadata: JSON.stringify(metadata)
+                })
+            } else {
+                res.status(new_reply.status).send(new_reply.data)
+            }
+        } else {
+            res.status(err.status).send(err.data)
+        }
+    })
 
 //   var cb_arr = [];
 //   goLogging(`cif-unitel-${userid}`, 'info', 'CHANNELBACK', userid, req.body, username, '0/0');
