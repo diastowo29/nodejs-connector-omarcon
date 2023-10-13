@@ -6,6 +6,7 @@ var router = express.Router();
 var cif = require('../payload/cifhelper')
 var url = require("url");
 const db = require("../models");
+var request = require('request');
 const connection = db.zdConnection; // GANTI
 const marketplace = db.zdMarketplaces; // GANTI
 require('dotenv').config()
