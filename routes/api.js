@@ -174,7 +174,8 @@ router.post('/channelback', async function(req, res, next) {
         if (err.response.status == 401) {
             let token = await tokped.newToken(process.env.TOKPED_CLIENT_ID, process.env.TOKPED_CLIENT_SECRET);
             metadata['token'] = token;
-            let new_reply = await axios(tokped.replyMessagePayload(fsId, msgId, shopId, req.body.message, metadata.token))
+            console.log('new token', token)
+            let new_reply = await axios(tokped.replyMessagePayload(fsId, msgId, shopId, req.body.message, token))
             if (new_reply.status == 200) {
                 res.status(200).send({
                     external_id: new_reply.data.msg_id + '-' + new_reply.data.reply_time,
