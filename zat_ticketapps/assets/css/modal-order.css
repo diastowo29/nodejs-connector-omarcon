@@ -1,0 +1,77 @@
+[v-cloak] {
+  display: none;
+}
+
+#modal * {
+  font-size: 13px;
+}
+
+#modal h2,
+#modal h2 * {
+  font-size: 15px;
+}
+
+tbody tr:nth-of-type(even) {
+  background-color: #f7f7f7;
+}
+
+#modal .v-btn__content {
+  font-weight: normal;
+  text-transform: none;
+  font-size: 13px;
+  letter-spacing: normal;
+}
+
+#modal .v-btn__content i {
+  font-size: 16px;
+}
+
+#modal .v-overlay .v-overlay__scrim {
+  background-color: #fff !important;
+  border-color: #fff !important;
+}
+
+#modal .v-overlay--active .v-overlay__scrim {
+  opacity: 0.7 !important;
+}
+
+#modal .order-status span {
+  color: #ffffff;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.order-items .cancelled {
+  opacity: 0.6;
+  filter: grayscale(1);
+}
+
+#modal .v-data-table,
+#modal .v-data-table .v-image {
+  border: 1px #ddd solid;
+}
+
+#modal .v-data-table th,
+#modal .v-data-table tfoot td {
+  background-color: #eaeaea;
+}
+
+#modal .v-data-table tfoot td {
+  border-top: 1px #ddd solid;
+}
+
+#modal .v-data-table th,
+#modal .v-data-table td {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+#modal .item-actions {
+  list-style-type: none;
+  padding: 0;
+}
+
+#modal .item-actions li {
+  margin: 10px 0;
+}

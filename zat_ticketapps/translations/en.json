@@ -1,8 +1,8 @@
 {
   "app": {
-    "name": "Zen Tunes",
-    "short_description": "Play the famous zen tunes in your help desk.",
-    "long_description": "Play the famous zen tunes in your help desk and \n listen to the beats it has to offer.",
+    "name": "Zendesk Demo",
+    "short_description": "Zendesk Demo App",
+    "long_description": "Zendesk Demo App",
     "installation_instructions": "Simply click install."
   }
 }

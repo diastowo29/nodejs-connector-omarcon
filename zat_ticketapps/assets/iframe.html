@@ -1,332 +1,403 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <!--   See Using Zendesk Garden:
-    https://developer.zendesk.com/apps/docs/developer-guide/setup#using-zendesk-garden
-    https://garden.zendesk.com/css-components/bedrock/
-    https://garden.zendesk.com/css-components/utilities/typography/
-   -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/combine/npm/@zendeskgarden/css-bedrock@7.0.21,npm/@zendeskgarden/css-utilities@4.3.0">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
-  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.css"> -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
-  <script src="https://cdn.jsdelivr.net/npm/crypto-js@3.1.9-1/crypto-js.js"></script>
-  <style>
-    * {
-        margin: 0;
-        padding: 0;
-        outline: none;
-      }
+  <head>
+    <meta charset="utf-8" />
+    <!-- Required CSS modules -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"
+      rel="stylesheet"
+    />
+    <link
+      href="https://use.fontawesome.com/releases/v5.13.1/css/all.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/vuetify@2.3.13/dist/vuetify.min.css"
+      rel="stylesheet"
+    />
+    <link href="components/loader.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
+  </head>
+  <body>
+    <v-app id="app" v-cloak>
+      <v-card flat class="app-container pa-1">
+        <!-- User info -->
+        <v-card flat>
+          <v-list-item class="primary">
+            <v-list-item-avatar class="requester-avatar">
+              <v-img
+                :src="sharedData.requester.photo?.content_url || defaultAvatar"
+              />
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title class="requester-name white--text">
+                {{ sharedData.requester.name }}
+              </v-list-item-title>
+              <v-list-item-subtitle
+                class="requester-details grey--text text--lighten-2"
+              >
+                Customer ID: {{ sharedData.requester.id }}
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-card>
 
-      body {
-        font-family: 'Roboto', sans-serif;
-      }
+        <!-- Navigation bar -->
+        <v-card class="navigation-bar" color="grey lighten-3" flat>
+          <v-btn
+            v-for="(tab, key) in sharedData.tabs"
+            :key="`tab-${key}`"
+            color="transparent"
+            :class="
+            currentTab === key ? 'primary--text' : 'grey--text text--lighten-1'
+          "
+            depressed
+            @click="currentTab = key"
+          >
+            <v-icon>{{ tab.icon }}</v-icon>
+          </v-btn>
+        </v-card>
 
-      .container {
-        width: 280px;
-        height: 500px;
-        margin: 30px auto;
-      }
-
-      .card {
-        border-radius: 25px;
-        box-shadow: -11px 11px 1px rgba(0, 0, 0, 0.3);
-      }
-
-      .card-head {
-        position: relative;
-        height: 188px;
-        background: #fa782e;
-        /* Old browsers */
-        background: -moz-linear-gradient(-45deg, #fa782e 8%, #c82930 83%);
-        /* FF3.6-15 */
-        background: -webkit-linear-gradient(-45deg, #fa782e 8%, #c82930 83%);
-        /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(135deg, #fa782e 8%, #c82930 83%);
-        /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-        filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#fa782e', endColorstr='#c82930', GradientType=1);
-        /* IE6-9 fallback on horizontal gradient */
-        border-radius: 25px 25px 0 0;
-      }
-
-      .card-logo {
-        width: 55px;
-        margin: 20px;
-      }
-
-      .product-img {
-        position: absolute;
-        left: 0;
-        margin-top: -16px;
-        margin-left: 50px;
-      }
-
-      .product-detail {
-        padding: 0 20px;
-        font-size: 11px;
-        color: #fff;
-      }
-
-      .product-detail h2 {
-        font-size: 18px;
-        font-weight: 500;
-        letter-spacing: 2px;
-        padding-bottom: 10px;
-        text-transform: uppercase;
-      }
-
-      .back-text {
-        display: inline-block;
-        font-size: 125px;
-        font-weight: 900;
-        margin-left: -7px;
-        margin-top: -12px;
-        opacity: 0.1;
-      }
-
-      .card-body {
-        height: 255px;
-        background: #fff;
-        border-radius: 0 0 25px 25px;
-      }
-
-      .product-title {
-        padding: 20px 20px 5px 20px;
-        display: block;
-        font-size: 17px;
-        font-weight: 500;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-      }
-
-      .product-title b {
-        font-weight: 900;
-        letter-spacing: 0px;
-      }
-
-      .badge {
-        position: relative;
-        font-size: 10px;
-        font-weight: 300;
-        color: #fff;
-        background: #11e95b;
-        padding: 2px 5px;
-        border-radius: 4px;
-        top: -2px;
-        margin-left: 5px;
-      }
-
-      .product-caption {
-        display: block;
-        padding: 0 20px;
-        font-size: 10px;
-        font-weight: 400;
-        text-transform: uppercase;
-      }
-
-      .product-rating {
-        padding: 0 20px;
-        font-size: 11px;
-      }
-
-      .product-rating i.grey {
-        color: #acacab;
-      }
-
-      .product-size h4 {
-        font-size: 11px;
-        padding: 0 21px;
-        margin-top: 15px;
-        padding-bottom: 10px;
-        text-transform: uppercase;
-      }
-
-      .ul-size {
-        margin-left: 15px;
-      }
-
-      .ul-size li {
-        list-style: none;
-        float: left;
-        margin-right: 20px;
-      }
-
-      .ul-size li a {
-        display: inline-block;
-        text-decoration: none;
-        font-size: 11px;
-        width: 22px;
-        height: 22px;
-        border-radius: 100%;
-        text-align: center;
-        line-height: 23px;
-        color: #000;
-      }
-
-      .ul-size li a.active {
-        background: #f35e3d;
-        color: #fff;
-      }
-
-      .product-size:before,
-      .product-size:after {
-        content: '';
-        display: block;
-        clear: both;
-      }
-
-      .product-color h4 {
-        font-size: 11px;
-        padding: 0 21px;
-        margin-top: 20px;
-        padding-bottom: 20px;
-        text-transform: uppercase;
-      }
-
-      .ul-color {
-        margin-left: 27px;
-      }
-
-      .ul-color li {
-        list-style: none;
-        float: left;
-        margin-right: 20px;
-      }
-
-      .ul-color li a {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border-radius: 100%;
-      }
-
-      .ul-color li a.orange {
-        background: #f35e3d;
-      }
-
-      .ul-color li a.green {
-        background: #11e95b;
-      }
-
-      .ul-color li a.yellow {
-        background: #ffd414;
-      }
-
-      .ul-color li a.active:after {
-        position: absolute;
-        content: '';
-        display: inline-block;
-        border: 1px solid #f35e3d;
-        width: 24px;
-        height: 24px;
-        border-radius: 100%;
-        margin-left: -5px;
-        margin-top: -5px;
-      }
-
-      .product-price {
-        position: absolute;
-        background: #11e95b;
-        padding: 7px 20px;
-        text-align: center;
-        display: inline-block;
-        font-size: 24px;
-        font-weight: 200;
-        color: #fff;
-        border-radius: 7px;
-        margin-top: -13px;
-        margin-left: -5px;
-        box-shadow: -10px 20px 15px -10px rgba(17, 233, 91, 0.3);
-      }
-
-      .product-price b {
-        margin-left: 5px;
-      }
-
-
-
-      .yt
-      {
-        position: fixed;
-        padding:7px 10px 3px 10px;
-        top: 5px;
-        right: 5px;
-        background: rgba(0,0,0,0.1);
-      }
-
-      .yt:hover
-      {
-        background: rgba(0,0,0,0.2);
-      }
-
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="card">
-      <div class="card-head">
-        <img src="https://images.tokopedia.net/img/cache/200-square/hDjmkQ/2023/8/29/33f2e339-7881-4f93-af6f-a3bf5588b52b.jpg" alt="logo" class="card-logo">
-        <div class="product-detail">
-          <h2 id="product-name">Hartbeespoort</h2> Support and Nike Zoom Air come together for a more supportive feel with high-speed responsiveness
-        </div>
-        <!-- <span class="back-text">
-          EIG
-        </span>
-        <span class="back-text">
-          ER
-        </span> -->
-      </div>
-      <div class="card-body">
-        <div class="product-desc">
-          <span id="product-name-title" class="product-title">
-                  Hartbee<b>spoort</b>
-                  <span class="badge">
-                    New
-                  </span>
+        <!-- Current tab -->
+        <v-card class="text-center my-2 pa-2" color="grey lighten-3" flat>
+          <span class="primary--text font-weight-bold">
+            {{ sharedData.tabs[currentTab].name }}
           </span>
-          <span class="product-caption">
-                  Basket Ball Collection
-                </span>
-          <span class="product-rating">
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star grey"></i>
-                </span>
-        </div>
-        <div class="product-properties">
-          <span class="product-size">
-                  <h4>Size</h4>
-                  <ul class="ul-size">
-                    <li><a href="#">7</a></li>
-                    <li><a href="#">8</a></li>
-                    <li><a href="#">9</a></li>
-                    <li><a href="#" class="active">10</a></li>
-                    <li><a href="#">11</a></li>
+        </v-card>
+
+        <!-- User info tab - Start -->
+        <template v-if="currentTab === 'user'">
+          <v-simple-table class="user-info" dense>
+            <template v-slot:default>
+              <tbody>
+                <tr v-if="sharedData.requester.name">
+                  <td class="user-info-item">
+                    <strong>Name:</strong>
+                  </td>
+                  <td>{{ sharedData.requester.name }}</td>
+                </tr>
+                <tr v-if="sharedData.requester.email">
+                  <td class="user-info-item">
+                    <strong>Email:</strong>
+                  </td>
+                  <td>{{ sharedData.requester.email }}</td>
+                </tr>
+                <tr v-if="sharedData.requester.phone">
+                  <td class="user-info-item">
+                    <strong>Phone:</strong>
+                  </td>
+                  <td>{{ sharedData.requester.phone }}</td>
+                </tr>
+                <template
+                  v-for="(item, key) in sharedData.requester.user_fields"
+                >
+                  <tr
+                    v-if="(item || typeof item === 'boolean') && sharedData.userFields.find((obj) => obj.key === key)"
+                    :key="`field-${key}`"
+                  >
+                    <td class="user-info-item">
+                      <strong>
+                        {{ sharedData.userFields.find((obj) => obj.key ===
+                        key).title }}:
+                      </strong>
+                    </td>
+                    <td>
+                      {{
+                      /^([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])/.test(
+                      item ) ? dateToString(item) : item }}
+                    </td>
+                  </tr>
+                </template>
+                <tr v-if="sharedData.requester.notes">
+                  <td class="user-info-item">
+                    <strong>Notes:</strong>
+                  </td>
+                  <td>{{ sharedData.requester.notes }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </template>
+        <!-- User info tab - End -->
+
+        <!-- Loyalty tab - Start -->
+        <template v-if="currentTab === 'loyalty'">
+          <v-simple-table dense>
+            <template v-slot:default>
+              <tbody>
+                <tr
+                  v-for="(item, key) in sharedData.loyalty.details"
+                  :key="`detail-${key}`"
+                >
+                  <td>
+                    <v-icon class="mr-2" color="primary">
+                      {{ item.icon }}
+                    </v-icon>
+                    <strong>{{ item.title }}:</strong>
+                  </td>
+                  <td>{{ item.value }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <v-icon class="mr-2" color="primary">
+                      fa-shopping-cart
+                    </v-icon>
+                    <strong>Total orders:</strong>
+                  </td>
+                  <td>{{ sharedData.orders.length }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <v-icon class="mr-2" color="primary"> fa-wallet </v-icon>
+                    <strong>Total lifetime spent:</strong>
+                  </td>
+                  <td>{{ totalSpent }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+
+          <!-- Discount vouchers -->
+          <h2 class="mt-2">Offer discount</h2>
+          <v-divider class="mb-2"></v-divider>
+          <div class="d-flex justify-center align-center">
+            <v-select
+              v-model="selectedDiscount"
+              :items="availableDiscounts"
+              label="Discount"
+              append-icon="fa-chevron-down"
+              height="40"
+              dense
+              flat
+              outlined
+              hide-details
+            ></v-select>
+            <v-btn
+              class="ml-2"
+              color="primary"
+              height="40"
+              depressed
+              :disabled="!selectedDiscount"
+              @click="offerDiscount(selectedDiscount)"
+            >
+              Generate coupon
+            </v-btn>
+          </div>
+
+          <h2 class="mt-2">Discount vouchers</h2>
+          <v-divider class="mb-2"></v-divider>
+          <v-simple-table dense>
+            <template v-slot:default>
+              <thead>
+                <th>Code</th>
+                <th>Source</th>
+                <th class="text-center">%</th>
+                <th class="text-center">Status</th>
+              </thead>
+              <tbody>
+                <template v-for="(item, index) in sharedData.loyalty.vouchers">
+                  <tr
+                    v-if="index < 5 || loadAllVouchers"
+                    :key="`voucher-${index}`"
+                  >
+                    <td>
+                      <a
+                        v-if="item.status === 'available'"
+                        href="#"
+                        @click="displayDiscountOnEditor(item)"
+                      >
+                        {{ item.code }}
+                      </a>
+                      <span v-else> {{ item.code }} </span>
+                    </td>
+                    <td>{{ item.source }}</td>
+                    <td class="text-center">{{ item.discount }}</td>
+                    <td class="text-center">{{ item.status }}</td>
+                  </tr>
+                  <tr
+                    v-else-if="
+                    sharedData.loyalty.vouchers.length > 5 && index === 5 && !loadAllVouchers
+                  "
+                    :key="`voucher-${index}`"
+                  >
+                    <td class="text-center" colspan="4">
+                      <a
+                        href="#"
+                        @click.prevent="
+                        loadAllVouchers = true
+                        resizeApp()
+                      "
+                      >
+                        Load all {{ sharedData.loyalty.vouchers.length }}
+                        vouchers
+                      </a>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </template>
+        <!-- Loyalty tab - End -->
+
+        <!-- Orders tab - Start -->
+        <template v-if="currentTab === 'orders'">
+          <v-text-field
+            v-model="searchOrderInput"
+            prepend-inner-icon="fa-search"
+            label="Search by date or order ID..."
+            dense
+            solo
+            flat
+            outlined
+            hide-details
+            autocomplete="off"
+            @keydown.enter="searchData('Order')"
+          ></v-text-field>
+
+          <div class="my-2">
+            <v-row no-gutters>
+              <v-col
+                v-for="(item, index) in [
+                { name: 'date', value: 'Date' },
+                { name: 'id', value: 'ID' }
+              ]"
+                :key="`sort-${index}`"
+                cols="6"
+                :class="index === 0 ? 'pr-1' : 'pl-1'"
+              >
+                <v-btn
+                  width="100%"
+                  :color="sortOrderBy === item.name ? 'grey darken-2' : 'grey'"
+                  outlined
+                  :disabled="!getOrders.length"
+                  @click="
+                  sortOrderBy = item.name
+                  sortOrderOrder = sortOrderOrder === 'asc' ? 'desc' : 'asc'
+                "
+                >
+                  Sort by {{ item.value }}
+                  <v-icon
+                    v-if="sortOrderBy === item.name"
+                    class="ml-2"
+                    size="10"
+                  >
+                    {{ sortOrderOrder === 'desc' ? 'fa-chevron-down' :
+                    'fa-chevron-up' }}
+                  </v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+          </div>
+
+          <v-expansion-panels
+            v-model="orderTab"
+            v-if="getOrders.length"
+            class="mt-2"
+            accordion
+            flat
+          >
+            <v-expansion-panel
+              v-for="(order, oIndex) in getOrders"
+              :key="`order-${oIndex}`"
+              hide-actions
+            >
+              <v-expansion-panel-header expand-icon="fa-chevron-down">
+                <v-card flat>
+                  <strong class="text-uppercase"> {{ order.id }} </strong>
+                  <v-chip
+                    :color="sharedData.status[order.status].color"
+                    class="ml-0 ml-1 order-status"
+                    label
+                    small
+                  >
+                    {{ sharedData.status[order.status].name }}
+                  </v-chip>
+                  <p class="panel-subtitle grey--text mb-0">
+                    {{ dateToString(order.date) }}
+                  </p>
+                </v-card>
+              </v-expansion-panel-header>
+
+              <v-expansion-panel-content>
+                <v-divider></v-divider>
+                <v-card-text class="pa-0">
+                  <ul class="panel-items">
+                    <li>
+                      <strong class="grey--text">Total</strong>
+                      <br />
+                      {{ orderTotal(order.id) }}
+                    </li>
+                    <template v-for="(detail, dIndex) in order.details">
+                      <li v-if="!detail.deep" :key="`detail-${dIndex}`">
+                        <strong class="grey--text">{{ detail.name }}</strong>
+                        <br />
+                        {{ detail.value }}
+                      </li>
+                    </template>
                   </ul>
-                </span>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-  <script src="https://static.zdassets.com/zendesk_app_framework_sdk/2.0/zaf_sdk.min.js"></script>
-  <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-  <script src="https://bundle.run/buffer@6.0.3"></script>
-  <!-- <script type="text/javascript" src="js/buffer-v4.js"></script> -->
-  <!-- <script type="text/javascript" src="js/buffer-bundle.js"></script> -->
-  <!-- <script type="text/javascript" src="js/bundle.js"></script> -->
-  <!-- <script type="text/javascript" src="js/bundle-app.js"></script> -->
-  <!-- <script type="text/javascript" src="lib/pasarpolis-sdk-nodejs-master/utils/generateMD5.js"></script> -->
-  <!-- <script type="text/javascript" src="js/main.js"></script> -->
-  <script type="text/javascript" src="js/apps.js"></script>
-</body>
+                  <v-btn
+                    color="primary"
+                    depressed
+                    width="100%"
+                    @click="openOrder(order.id)"
+                  >
+                    View details
+                  </v-btn>
+                </v-card-text>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+
+          <div v-else class="no-results text-center mt-5">
+            <v-img height="100" src="img/404.svg" contain></v-img>
+            <p>No results!<br />Please try to refine your search terms.</p>
+          </div>
+        </template>
+        <!-- Orders tab - End -->
+
+        <!-- Basket tab - Start -->
+        <template v-if="currentTab === 'basket'">
+          <v-simple-table dense>
+            <template v-slot:default>
+              <thead>
+                <th>Item</th>
+                <th>Price</th>
+                <th class="text-center">QTY</th>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(item, index) in sharedData.basket"
+                  :key="`basket-${index}`"
+                >
+                  <td>{{ itemsInfo[item.id].name }}</td>
+                  <td>
+                    {{ formatMoney(itemsInfo[item.id].price,
+                    sharedData.currencySymbol) }}
+                  </td>
+                  <td class="text-center">{{ item.quantity }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+
+          <v-btn class="mt-2" color="primary" depressed width="100%">
+            Make purchase
+          </v-btn>
+        </template>
+        <!-- Basket tab - End -->
+      </v-card>
+
+      <!-- Loader -->
+      <app-loader v-if="loader.active" :opacity="loader.opacity"></app-loader>
+    </v-app>
+
+    <!-- Required JS modules -->
+    <script src="https://static.zdassets.com/zendesk_app_framework_sdk/2.0/zaf_sdk.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.3.13/dist/vuetify.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="components/loader.js"></script>
+    <script src="js/app.js"></script>
+  </body>
 </html>

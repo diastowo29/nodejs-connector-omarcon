@@ -1,9 +1,9 @@
 {
-  "name": "Product Overview",
+  "name": "MYCommerce",
   "author": {
-    "name": "Trees Solutions",
-    "email": "info@treessolutions.com",
-    "url": "https://treessolutions.com"
+    "name": "Marcelo De Bortoli",
+    "email": "mdebortoli@zendesk.com",
+    "url": "https://www.zendesk.com"
   },
   "defaultLocale": "en",
   "private": true,
@@ -11,26 +11,13 @@
     "support": {
       "ticket_sidebar": {
         "url": "assets/iframe.html",
-        "flexible": true
-      },
-      "modal": {
-        "url": "assets/modal.html"
+        "size": {
+          "width": "100%",
+          "height": "480px"
+        }
       }
     }
   },
-  "parameters": [
-    {
-      "name": "Production Env",
-      "type": "text",
-      "required": true,
-      "default": "https://connector-switchboard-kata-dev.herokuapp.com/"
-    },
-    {
-      "name": "Production Secret Key",
-      "type": "hidden",
-      "default": "af0681a3-a207-4a6a-b6f9-73c4600fd1a4"
-    }
-  ],
   "version": "1.0",
   "frameworkVersion": "2.0"
 }
