@@ -105,47 +105,6 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
       // console.log(ext)
       msgObj['file_urls'] = [`/api/v1/file/image.jpeg?source=${image_url}`]
     }
-
-//   if (msg_type == 'text') {
-//     if (msg_content == '') {
-//         msg_content = '- empty message -'
-//     }
-//     msgObj['message'] = msg_content;
-//   } else {
-//     let ext = mime.extension(mime.lookup(msg_content))
-//     var fileMessage = '';
-//     if (!ext) {
-//       if (msg_type == 'image') {
-//         fileMessage = `${msg_type} from User`
-//         ext = 'jpeg';
-//       } else if (msg_type == 'video') {
-//         fileMessage = `${msg_type} from User`
-//         ext = 'mp4';
-//       } else {
-//         if (msg_type == 'file') {
-//           var tFile;
-//           try {
-//             tFile = await axios.get(decodeURIComponent(msg_content))
-//             if (mime.extension(tFile.headers['content-type'])) {
-//               fileMessage = `${msg_type} from User`
-//               ext = mime.extension(tFile.headers['content-type']);
-//             } else {
-//               fileMessage = `Unsupported ${msg_type} from User`;
-//             }
-//           } catch (err) {
-//             fileMessage = `Error getting ${msg_type} from User`;
-//             goLogging('error', 'FILE', msg.from.id, err, username);
-//           }
-//         }
-//       }
-//     } else {
-//       fileMessage = `${msg_type} from User`;
-//     }
-//     msgObj['message'] = fileMessage;
-//     if (ext) {
-//       msgObj['file_urls'] = [`/api/v1/cif/file/users-file.${ext}?source=${msg_content}`]
-//     }
-//   }
   return msgObj;
 }
 

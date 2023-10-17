@@ -11,9 +11,6 @@ const connection = db.zdConnection; // GANTI
 const marketplace = db.zdMarketplaces; // GANTI
 require('dotenv').config()
 
-var tokpedHost = process.env.TOKPED_HOST;
-let proxyUrl = process.env.QUOTAGUARDSTATIC_URL;
-
 router.get('/test', async function(req, res, next) {
     let zdConnection = await connection.findAll();
     let zdMarketplaces = await marketplace.findAll();
@@ -68,9 +65,6 @@ router.post('/admin', function(req, res, next) {
   
 router.post('/add', async function(req, res, next) {
     let metadata = {};
-
-    console.log(req.body)
-
     let token = await tokped.newToken(process.env.TOKPED_CLIENT_ID, process.env.TOKPED_CLIENT_SECRET);
     metadata['instance_push_id'] = req.body.instance_push_id;
     metadata['zendesk_access_token'] = req.body.zendesk_access_token;
@@ -161,7 +155,8 @@ router.post('/channelback', async function(req, res, next) {
     let fsId = process.env.TOKPED_APPS_ID;
     let msgId = req.body.parent_id.split('-')[3];
     let shopId = req.body.thread_id.split('-')[3];
-    let metadata = JSON.parse(req.body.metadata)    
+    let metadata = JSON.parse(req.body.metadata);
+    doChannelback(req.body);
     // console.log(tokped.replyMessagePayload(fsId, msgId, shopId, req.body.message, metadata.token));
     axios(tokped.replyMessagePayload(fsId, msgId, shopId, req.body.message, metadata.token)).then(function(reply) {
         if (reply.status == 200) {
@@ -174,7 +169,6 @@ router.post('/channelback', async function(req, res, next) {
         if (err.response.status == 401) {
             let token = await tokped.newToken(process.env.TOKPED_CLIENT_ID, process.env.TOKPED_CLIENT_SECRET);
             metadata['token'] = token.data.access_token;
-            console.log('new token', token.data.access_token)
             let new_reply = await axios(tokped.replyMessagePayload(fsId, msgId, shopId, req.body.message, token.data.access_token))
             if (new_reply.status == 200) {
                 res.status(200).send({
@@ -188,54 +182,6 @@ router.post('/channelback', async function(req, res, next) {
             res.status(err.status).send(err.data)
         }
     })
-
-//   var cb_arr = [];
-//   goLogging(`cif-unitel-${userid}`, 'info', 'CHANNELBACK', userid, req.body, username, '0/0');
-    // if (req.body.message) {
-    //     var textPayload = service.pushBackPayload(
-    //         EXT_CHAT_ENDPOINT, EXT_CHAT_TOKEN, 
-    //         unitel.replyPayload(msgid, 'text', req.body.message, brandid, username, userid))
-    //     cb_arr.push(textPayload)
-    // }
-//   if (req.body['file_urls[]']) {
-//     if (!Array.isArray(req.body['file_urls[]'])) {
-//       req.body['file_urls[]'] = [req.body['file_urls[]']]
-//     }
-//     req.body['file_urls[]'].forEach(zdFile => {
-//       let fileType = cifhelper.fileExtValidator(zdFile);
-//       var filePayload = service.pushBackPayload(
-//         EXT_CHAT_ENDPOINT, EXT_CHAT_TOKEN, 
-//         unitel.replyPayload(msgid, fileType, zdFile, brandid, username, userid))
-//       cb_arr.push(filePayload)
-//     });
-//   }
-
-//   cb_arr.forEach((cb, i) => {
-//     axios(cb).then((response) => {
-//       if (response.status == 200) {
-//         if (response.data.status == 'failed') {
-//           if (response.data.response == 'Unauthorized') {
-//             goLogging(`cif-unitel-${userid}`, 'error', 'CHANNELBACK-401', userid, req.body, username, '0/0');
-//             res.status(401).send(response.data);
-//           }
-//         }
-//         if (i == 0) {
-//           goLogging(`cif-unitel-${userid}`, 'info', 'CHANNELBACK', userid, {req: req.body.request_unique_identifier, res: response.data}, username, '0/0');
-//           res.status(200).send({
-//             external_id: msgid
-//           });	
-//         }
-//       }
-//     }, (error) => {
-//     	console.log('error')
-//       console.log(JSON.stringify(error))
-//       goLogging(`cif-unitel-${userid}`, 'error', 'CHANNELBACK', userid, error.response, username, '0/0');
-//       if (i == 0) {
-//         res.status(503).send({});
-//       }
-//     })
-//   });
-	// res.status(200).send({});	
 })
 
 router.post('/file/:filename\.:ext?', function(req, res, next) {
@@ -246,5 +192,9 @@ router.post('/file/:filename\.:ext?', function(req, res, next) {
 router.get('/clickthrough', function(req, res, next) {
 	res.status(200).send({});	
 })
+
+function doChannelback (body) {
+
+}
 
 module.exports = router;
