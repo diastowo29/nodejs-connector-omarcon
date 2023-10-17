@@ -104,6 +104,8 @@ router.post('/chat', async function(req, res, next) {
     let cifPayload = await (cif.cifPayload(req.body, 0, 0, '22587396407065'));
 	let external_resource_array = [cifPayload];
     let shop_id = req.body.shop_id;
+
+    console.log(JSON.stringify(req.body))
     connection.findOne({
         where: {
             shop_id: shop_id,
