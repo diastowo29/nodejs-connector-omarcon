@@ -153,35 +153,33 @@ router.post('/discussion', async function(req, res, next) {
 
 router.post('/channelback', async function(req, res, next) {
     let fsId = process.env.TOKPED_APPS_ID;
-    let msgId = req.body.parent_id.split('-')[3];
-    let shopId = req.body.thread_id.split('-')[3];
     let metadata = JSON.parse(req.body.metadata);
-    doChannelback(req.body);
-    // console.log(tokped.replyMessagePayload(fsId, msgId, shopId, req.body.message, metadata.token));
-    axios(tokped.replyMessagePayload(fsId, msgId, shopId, req.body.message, metadata.token)).then(function(reply) {
-        if (reply.status == 200) {
-            res.status(200).send({external_id: reply.data.msg_id + '-' + reply.data.reply_time})
-        } else {
-            res.status(reply.status).send(reply.data)
-        }
-    }).catch(async function(err){
-        console.log('error', err.response.status)
-        if (err.response.status == 401) {
-            let token = await tokped.newToken(process.env.TOKPED_CLIENT_ID, process.env.TOKPED_CLIENT_SECRET);
-            metadata['token'] = token.data.access_token;
-            let new_reply = await axios(tokped.replyMessagePayload(fsId, msgId, shopId, req.body.message, token.data.access_token))
-            if (new_reply.status == 200) {
-                res.status(200).send({
-                    external_id: new_reply.data.msg_id + '-' + new_reply.data.reply_time,
-                    metadata: JSON.stringify(metadata)
-                })
-            } else {
-                res.status(new_reply.status).send(new_reply.data)
-            }
-        } else {
-            res.status(err.status).send(err.data)
-        }
-    })
+    console.log(req.body)
+    // tokped.replyMessagePayload(fsId, req.body, metadata.token)
+    // tokped.replyMessagePayload(fsId, req.body, metadata.token).then(function(reply) {
+    //     if (reply.status == 200) {
+    //         res.status(200).send({external_id: reply.data.msg_id + '-' + reply.data.reply_time})
+    //     } else {
+    //         res.status(reply.status).send(reply.data)
+    //     }
+    // }).catch(async function(err){
+    //     console.log('error', err.response.status)
+    //     if (err.response.status == 401) {
+    //         let token = await tokped.newToken(process.env.TOKPED_CLIENT_ID, process.env.TOKPED_CLIENT_SECRET);
+    //         metadata['token'] = token.data.access_token;
+    //         let new_reply = await tokped.replyMessagePayload(fsId, req.body, token.data.access_token)
+    //         if (new_reply.status == 200) {
+    //             res.status(200).send({
+    //                 external_id: new_reply.data.msg_id + '-' + new_reply.data.reply_time,
+    //                 metadata: JSON.stringify(metadata)
+    //             })
+    //         } else {
+    //             res.status(new_reply.status).send(new_reply.data)
+    //         }
+    //     } else {
+    //         res.status(err.status).send(err.data)
+    //     }
+    // })
 })
 
 router.post('/file/:filename\.:ext?', function(req, res, next) {

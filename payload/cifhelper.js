@@ -88,9 +88,9 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
     }
     if (attachment_type == 3) {
       let html_msg_content = '';
-      html_msg_content = html_msg.productHtml(msg.payload.product.name, msg.payload.product.price, msg.payload.product.product_url)
-      msg_content = 'Product'
-      msgObj['html_message'] = html_msg_content
+      // html_msg_content = html_msg.productHtml(msg.payload.product.name, msg.payload.product.price, msg.payload.product.product_url)
+      msg_content = 'Product: ' + product_id
+      // msgObj['html_message'] = html_msg_content
       msgObj['display_info'] = [{
         type: 'product',
         data: {
