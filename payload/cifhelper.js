@@ -88,7 +88,7 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
   }
     if (attachment_type == 3) {
       let product_encode = msg.payload.product.product_url.toString('base64')
-      msgObj['ticket_external_id'] = `tokped-ticket-${userid}-${msg.msg_id}-${product_encode}`;
+      msgObj['external_id'] = `tokped-ticket-${userid}-${msg.msg_id}-${product_encode}`;
       // let html_msg_content = '';
       // html_msg_content = html_msg.productHtml(msg.payload.product.name, msg.payload.product.price, msg.payload.product.product_url)
       msg_content = `Product: ${product_id}\nProduct URL : ${msg.payload.product.product_url}`
@@ -107,7 +107,7 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
       msgObj['file_urls'] = [`/api/v1/file/image.jpeg?source=${image_url}`]
     } else if (attachment_type == 0) {
       msg_encode = msg.message.toString('base64')
-      msgObj['ticket_external_id'] = `tokped-ticket-${userid}-${msg.msg_id}-${msg_encode}`;
+      msgObj['external_id'] = `tokped-ticket-${userid}-${msg.msg_id}-${msg_encode}`;
     }
     
   return msgObj;
