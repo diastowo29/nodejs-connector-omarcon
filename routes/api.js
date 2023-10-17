@@ -117,7 +117,7 @@ router.post('/chat', async function(req, res, next) {
                 console.log(JSON.stringify(cifPayload))
                 axios(axiosPayload).then((response) => {
                     res.status(200).send(response.data)
-                    console.log(response.data)
+                    console.log(JSON.stringify(response.data))
                 }, (error) => {
                     res.status(error.response.status).send({error: error})
                 })
