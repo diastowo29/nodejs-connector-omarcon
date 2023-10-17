@@ -16,15 +16,17 @@ const replyMessagePayload = function (fsId, body, token) {
         proxy: proxyConfig
     }
     
-    if (body['file_urls[]']) {
+    /* NOT SUPPORT SEND FILE YET */
+    /* if (body['file_urls[]']) {
         if (!Array.isArray(body['file_urls[]'])) {
             body['file_urls[]'] = [body['file_urls[]']]
         }
         tokpedPayload.data['attachment_type'] = 2
         tokpedPayload.data['file_path'] = body['file_urls[]'][0]
-    }
-    console.log(JSON.stringify(tokpedPayload))
-    // return axios(tokpedPayload);
+    } */
+    /* NOT SUPPORT SEND FILE YET */
+
+    return axios(tokpedPayload);
 }
 
 const newToken = function (id, secret) {
