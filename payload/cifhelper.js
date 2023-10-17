@@ -87,7 +87,7 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
       allow_channelback: true
   }
     if (attachment_type == 3) {
-      let product_encode = msg.payload.product.product_url.toString('base64')
+      let product_encode = btoa(msg.payload.product.product_url)
       msgObj['external_id'] = `tokped-ticket-${userid}-${msg.msg_id}-${product_encode}`;
       // let html_msg_content = '';
       // html_msg_content = html_msg.productHtml(msg.payload.product.name, msg.payload.product.price, msg.payload.product.product_url)
@@ -106,7 +106,7 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
       // let ext = mime.extension(mime.lookup(image_url))
       msgObj['file_urls'] = [`/api/v1/file/image.jpeg?source=${image_url}`]
     } else if (attachment_type == 0) {
-      msg_encode = msg.message.toString('base64')
+      msg_encode = btoa(msg.message)
       msgObj['external_id'] = `tokped-ticket-${userid}-${msg.msg_id}-${msg_encode}`;
     }
     
