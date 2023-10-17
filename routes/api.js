@@ -114,8 +114,10 @@ router.post('/chat', async function(req, res, next) {
             try {
                 let auth = `Bearer ${conn.zd_pushtoken}`
                 let axiosPayload = zdSvc.pushConversationPayload(conn.zd_instance, auth, conn.zd_pushid, external_resource_array)
+                console.log(JSON.stringify(cifPayload))
                 axios(axiosPayload).then((response) => {
                     res.status(200).send(response.data)
+                    console.log(response.data)
                 }, (error) => {
                     res.status(error.response.status).send({error: error})
                 })
