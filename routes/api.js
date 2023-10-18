@@ -101,10 +101,10 @@ router.post('/pull', function(req, res, next) {
 })
 
 router.post('/chat', async function(req, res, next) {
-    let cifPayload = await (cif.cifPayload(req.body, 0, 0, '22587396407065'));
+    let my_timestamp = (Date.now()/10000).toFixed(0)
+    let cifPayload = await (cif.cifPayload(req.body, 0, 0, '22587396407065', my_timestamp));
 	let external_resource_array = [cifPayload];
     let shop_id = req.body.shop_id;
-    console.log(Date.now())
     connection.findOne({
         where: {
             shop_id: shop_id,

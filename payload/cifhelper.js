@@ -54,7 +54,7 @@ const cifDiscussionPayload = async function (payload, brand_id, user_ticket_id, 
   return msgObj;
 }
 
-const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_id) {
+const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_id, ts) {
     var msgObj = {};
     let username = msg.full_name
     let userid = msg.user_id
@@ -62,7 +62,7 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
     let author_external_id = Buffer.from(`tokped::${userid}`).toString('base64');
     let product_id = msg.payload.product.product_id;
     let attachment_type = msg.payload.attachment_type;
-    let ticket_external_id = `tokped-ticket-${userid}-${msg.msg_id}-${Date.now()}`;
+    let ticket_external_id = `tokped-ticket-${userid}-${msg.msg_id}-${Date.now()}-${ts}`;
     let msg_encode;
     let msg_content = msg.message;
     msgObj = {
@@ -88,7 +88,7 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
     }
     if (attachment_type == 3) {
       let product_encode = btoa(msg.payload.product.product_url)
-      msgObj['external_id'] = `tokped-ticket-${userid}-${msg.msg_id}-${product_encode}`;
+      msgObj['external_id'] = `tokped-ticket-${userid}-${msg.msg_id}-${product_encode}-${ts}`;
       // let html_msg_content = '';
       // html_msg_content = html_msg.productHtml(msg.payload.product.name, msg.payload.product.price, msg.payload.product.product_url)
       msg_content = `Product: ${product_id}\nProduct URL : ${msg.payload.product.product_url}`
@@ -107,7 +107,7 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
       msgObj['file_urls'] = [`/api/v1/file/image.jpeg?source=${image_url}`]
     } else if (attachment_type == 0) {
       msg_encode = btoa(msg.message)
-      msgObj['external_id'] = `tokped-ticket-${userid}-${msg.msg_id}-${msg_encode}`;
+      msgObj['external_id'] = `tokped-ticket-${userid}-${msg.msg_id}-${msg_encode}-${ts}`;
     }
     
   return msgObj;
