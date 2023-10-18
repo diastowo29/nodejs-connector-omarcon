@@ -85,7 +85,7 @@ const cifPayload = async function (msg, brand_id, user_ticket_id, product_field_
           value: product_id
       }],
       allow_channelback: true
-  }
+    }
     if (attachment_type == 3) {
       let product_encode = btoa(msg.payload.product.product_url)
       msgObj['external_id'] = `tokped-ticket-${userid}-${msg.msg_id}-${product_encode}`;
