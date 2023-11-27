@@ -21,7 +21,7 @@ router.get('/manifest', function(req, res, next) {
     let host = req.hostname
     res.send({
       name: "eCommerce Chat",
-      id: "trees-emarcon-chat-integration",
+      id: "trees-emarcon-chat-integration-dev",
       author: "Trees Solutions",
       version: "v1",
       push_client_id: "zd_trees_integration",
@@ -29,7 +29,8 @@ router.get('/manifest', function(req, res, next) {
       create_followup_tickets: false,
       urls: {
         admin_ui: "https://" + host + "/api/v1/admin",
-        channelback_url: "https://" + host + "/api/v1/channelback"
+        channelback_url: "https://" + host + "/api/v1/channelback",
+        pull_url: "https://" + host + "/api/v1/pull"
       }
     })
 });
@@ -43,9 +44,8 @@ router.get('/admin', function(req, res, next) {
       locale: 'locale',
       subdomain: 'subdomain'
     });
-    
-})
-  
+});
+
 router.post('/admin', function(req, res, next) {
     let instance_push_id = req.body.instance_push_id
     let zd_token = req.body.zendesk_access_token
@@ -74,7 +74,8 @@ router.post('/add', async function(req, res, next) {
     metadata['subdomain'] = req.body.subdomain;
     metadata['locale'] = req.body.locale;
     metadata['return_url'] = req.body.return_url;
-    metadata['bot_name'] = req.body.integration_name;
+    metadata['store_name'] = req.body.integration_name;
+    metadata['marketplace'] = req.body.marketType;
 
     connection.create({
         zd_pushid: req.body.instance_push_id,
@@ -97,6 +98,9 @@ router.post('/add', async function(req, res, next) {
 })
   
 router.post('/pull', function(req, res, next) {
+    // console.log(req.body);
+    let metadata = JSON.parse(req.body.metadata);
+    console.log(metadata.marketplace);
     res.status(200).send();
 })
 
